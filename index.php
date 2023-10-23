@@ -8,7 +8,21 @@ $url = 'https://www.google.com';
 
 $r = 'https://www.google.com';
 
-$url = preg_replace('/\\0/', 'https://www.google.com', $_GET["r"]);
+
+if ($_SERVER['REQUEST_METHOD'] == "GET") {
+    if ($_SERVER['QUERY_STRING']) {
+	// requests are sometimes sent as urlencoded-strings with a stupid FB
+	// client tracker ID tacked on as a query string, so decode as needed and
+	// discard the tracker ID
+	try {
+	    $url = explode('&', urldecode($_SERVER['QUERY_STRING']))[0];
+	} catch (Exception $e) {
+	    echo "Failed to parse request: $e";
+	}
+    }
+}
+
+//$url = preg_replace('/\\0/', 'https://www.google.com', $_GET["r"]);
 
 //$fake_user_agent = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.47 Safari/536.11";
 $fake_user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0";
@@ -35,10 +49,6 @@ $current .= "__";
 $current .= "\n";
 file_put_contents($file, $current);
 
-if (!filter_var($url, FILTER_VALIDATE_URL)) {
-    $url = 'https://www.google.com';
-}
-
 if (strlen($url) == 0){
     $url = 'https://www.google.com';
 }
@@ -51,22 +61,13 @@ if (empty($url)) {
     $url = 'https://www.google.com';
 }
 
-if (!isset($url)) {
-    $url = 'https://www.google.com';
-}
+$str2 = substr($url, 2);
+$url = $str2;
 
-if (strlen($url) >= 200) {
-    $url = 'https://www.google.com';
-}
-
-if (strlen($url) < 12) {
-  $url = 'https://www.google.com';
-}
-
-$file = 'trackurls';
 $current = file_get_contents($file);
-$current .= "post_process_";
+$current .= "_post_process_";
 $current .= $url;
+$current .= "__";
 $current .= "\n";
 file_put_contents($file, $current);
 
