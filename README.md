@@ -16,3 +16,5 @@ Fourthly, the code is garbo. Some parts are useless cruft from earlier efforts. 
 Fifthly, I have no idea what Im doing here. This is my first repo. Im not a coder
 
 This thing definitely could use a refactor and cleanup as well, and any recommendations regarding improving this repo also appreciated.
+
+Some systems may need the ca-cert, it is attached here, but for system security, retrieve from an official source
