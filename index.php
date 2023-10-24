@@ -1,5 +1,7 @@
 <?php
 
+// Modified by Dan Gahlinger, Oct/2023 - enhancements to attempt to curb abuse by bots
+
 $dom = new DomDocument();
 
 date_default_timezone_set("America/Toronto");
@@ -63,6 +65,19 @@ if (empty($url)) {
 
 $str2 = substr($url, 2);
 $url = $str2;
+
+
+if (str_contains($url, 'yahoo') or str_contains($url, 'google') or str_contains($url, '&') or str_contains($url, '@') or str_contains($url, '!')) { 
+    $url = 'https://www.google.com';
+}
+
+if (str_contains($url, 'microsoft') or str_contains($url, 'facebook') or str_contains($url, 'tiktok') or str_contains($url, 'instagram')) { 
+    $url = 'https://www.google.com';
+}
+
+if (str_contains($url, 'zerofusion')) {
+    $url = 'https://www.google.com';
+}
 
 $current = file_get_contents($file);
 $current .= "_post_process_";
