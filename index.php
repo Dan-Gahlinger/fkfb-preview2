@@ -2,6 +2,23 @@
 
 // Modified by Dan Gahlinger, Oct/2023 - enhancements to attempt to curb abuse by bots
 
+
+$newsurls = array(
+		'https://www.reuters.com/',
+		'https://apnews.com/',
+		'https://www.bbc.com/',
+		'https://www.cbc.ca/',
+		'https://www.aljazeera.com/',
+		'https://www.dw.com/',
+		'https://www.afp.com/',
+		'https://www3.nhk.or.jp/nhkworld/',
+		'https://www.abc.net.au/',
+		'https://www.npr.org/',
+		'https://www.pbs.org/',
+	      );
+
+$array_key = array_rand($newsurls, 1);
+
 $dom = new DomDocument();
 
 date_default_timezone_set("America/Toronto");
@@ -51,16 +68,8 @@ $current .= "__";
 $current .= "\n";
 file_put_contents($file, $current);
 
-if (strlen($url) == 0){
-    $url = 'https://www.google.com';
-}
-
-if (is_null($url)) {
-    $url = 'https://www.google.com';
-}
-
-if (empty($url)) {
-    $url = 'https://www.google.com';
+if ((strlen($url) == 0) or (is_null($url)) or (empty($url))){
+    $url = $newsurls[$array_key];
 }
 
 $str2 = substr($url, 2);
@@ -68,15 +77,15 @@ $url = $str2;
 
 
 if (str_contains($url, 'yahoo') or str_contains($url, 'google') or str_contains($url, '&') or str_contains($url, '@') or str_contains($url, '!')) { 
-    $url = 'https://www.google.com';
+    $url = $newsurls[$array_key];
 }
 
 if (str_contains($url, 'microsoft') or str_contains($url, 'facebook') or str_contains($url, 'tiktok') or str_contains($url, 'instagram')) { 
-    $url = 'https://www.google.com';
+    $url = $newsurls[$array_key];
 }
 
-if (str_contains($url, 'zerofusion')) {
-    $url = 'https://www.google.com';
+if (str_contains($url, 'zerofusion') or str_contains($url,'whatsapp') or str_contains($url,'youtube') or str_contains($url,'quanta')) {
+    $url = $newsurls[$array_key];
 }
 
 $current = file_get_contents($file);
