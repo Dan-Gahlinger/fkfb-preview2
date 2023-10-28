@@ -10,6 +10,20 @@ $r = 'r=https://www.apnews.com';
 
 $file = 'trackurls';
 
+if ($_SERVER['REQUEST_METHOD'] != "GET" {
+    $url = 'r=https://www.apnews.com';
+    $current = file_get_contents($file);
+    $current .= date("Y-m-d_H:i:s");
+    $current .= "\n";
+    $current .= "remote_addr_";
+    $current .= $_SERVER['REMOTE_ADDR'];
+    $current .= "\n";
+    $current .= "url_now_";
+    $current .= $url;
+    $current .= "\n";
+    file_put_contents($file, $current);  
+}
+
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
     if ($_SERVER['QUERY_STRING']) {
 	// requests are sometimes sent as urlencoded-strings with a stupid FB
@@ -34,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 	$current .= "__";
         $current .= "\n";
         file_put_contents($file, $current);	
-	if ((!strlen($_SERVER['QUERY_STRING']) == 0) and (!is_null($_SERVER['QUERY_STRING'])) and (!empty($_SERVER['QUERY_STRING']))) {
+	if ((!strlen($_SERVER['QUERY_STRING']) == 0) and (!is_null($_SERVER['QUERY_STRING'])) and (!empty($_SERVER['QUERY_STRING'])) and ($posb !== false)) {
 	  $url = $_SERVER['QUERY_STRING'];
 	}
 	if ((strlen($_SERVER['QUERY_STRING']) == 0) or (is_null($_SERVER['QUERY_STRING'])) or (empty($_SERVER['QUERY_STRING'])) or ($posb === false)) {
@@ -68,6 +82,12 @@ if ((strlen($url) == 0) or (is_null($url)) or (empty($url))) {
 $pos = strpos($url, "lang=en&fbclid=");
 
 if ($pos !== false) {
+    $url = 'r=https://www.apnews.com';
+}
+
+$pos = $strpos($url, "http");
+
+if ($pos === false) {
     $url = 'r=https://www.apnews.com';
 }
 
