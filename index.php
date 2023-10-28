@@ -10,7 +10,7 @@ $r = 'r=https://www.apnews.com';
 
 $file = 'trackurls';
 
-if ($_SERVER['REQUEST_METHOD'] != "GET" {
+if ($_SERVER['REQUEST_METHOD'] != "GET") {
     $url = 'r=https://www.apnews.com';
     $current = file_get_contents($file);
     $current .= date("Y-m-d_H:i:s");
