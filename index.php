@@ -15,18 +15,29 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 	// requests are sometimes sent as urlencoded-strings with a stupid FB
 	// client tracker ID tacked on as a query string, so decode as needed and
 	// discard the tracker ID
+	$posb = strpos($url, "http");
         $current = file_get_contents($file);
         $current .= date("Y-m-d_H:i:s");
         $current .= "\n";
+	$current .= "remote_addr_";
+	$current .= $_SERVER['REMOTE_ADDR'];
+	$current .= "\n";
+	$current .= "posb_";
+	$current .= $posb;
+	$current .= "\n";
         $current .= "_pre_process_";
         $current .= $_SERVER['QUERY_STRING'];
         $current .= "__";
+	$current .= "\n";
+	$current .= "len_";
+	$current .= strlen($_SERVER['QUERY_STRING']);
+	$current .= "__";
         $current .= "\n";
         file_put_contents($file, $current);	
 	if ((!strlen($_SERVER['QUERY_STRING']) == 0) and (!is_null($_SERVER['QUERY_STRING'])) and (!empty($_SERVER['QUERY_STRING']))) {
 	  $url = $_SERVER['QUERY_STRING'];
 	}
-	if ((strlen($_SERVER['QUERY_STRING']) == 0) or (is_null($_SERVER['QUERY_STRING'])) or (empty($_SERVER['QUERY_STRING']))) {
+	if ((strlen($_SERVER['QUERY_STRING']) == 0) or (is_null($_SERVER['QUERY_STRING'])) or (empty($_SERVER['QUERY_STRING'])) or ($posb === false)) {
 	  $url = 'r=https://www.apnews.com';
 	}
     }
@@ -50,15 +61,13 @@ $options = array('http' => array('user_agent'    => $fake_user_agent,
 
 $context = stream_context_create($options);
 
-if (strlen($url) == 0){
+if ((strlen($url) == 0) or (is_null($url)) or (empty($url))) {
     $url = 'r=https://www.apnews.com';
 }
 
-if (is_null($url)) {
-    $url = 'r=https://www.apnews.com';
-}
+$pos = strpos($url, "lang=en&fbclid=");
 
-if (empty($url)) {
+if ($pos !== false) {
     $url = 'r=https://www.apnews.com';
 }
 
@@ -66,8 +75,19 @@ $str2 = substr($url, 2);
 $url = $str2;
 
 $current = file_get_contents($file);
+$current .= "\n";
+$current .= "remote_addr_";
+$current .= $_SERVER['REMOTE_ADDR'];
+$current .= "\n";
+$current .= "pos_";
+$current .= $pos;
+$current .= "\n";
 $current .= "_post_process_";
 $current .= $url;
+$current .= "__";
+$current .= "\n";
+$current .= "len_url_";
+$current .= strlen($url);
 $current .= "__";
 $current .= "\n";
 file_put_contents($file, $current);
