@@ -1,5 +1,7 @@
 <?php
 
+// Version 21 Oct 29/2023 6:41pm
+//
 $dom = new DomDocument();
 
 date_default_timezone_set("America/Toronto");
@@ -79,15 +81,21 @@ if ((strlen($url) == 0) or (is_null($url)) or (empty($url))) {
     $url = 'r=https://www.apnews.com';
 }
 
-$pos = strpos($url, "lang=en&fbclid=");
+$posc = strpos($url, "lang=en&fbclid=");
 
-if ($pos !== false) {
+if ($posc !== false) {
     $url = 'r=https://www.apnews.com';
 }
 
-$pos = $strpos($url, "http");
+$pos = strpos($url, "http");
 
 if ($pos === false) {
+    $url = 'r=https://www.apnews.com';
+}
+
+$posd = strpos($url, "?action=");
+
+if ($posd !== false) {
     $url = 'r=https://www.apnews.com';
 }
 
@@ -101,6 +109,11 @@ $current .= $_SERVER['REMOTE_ADDR'];
 $current .= "\n";
 $current .= "pos_";
 $current .= $pos;
+$current .= "\n";
+$current .= "posc_";
+$current .= $posc;
+$current .= "\n posd_";
+$current .= $posd;
 $current .= "\n";
 $current .= "_post_process_";
 $current .= $url;
