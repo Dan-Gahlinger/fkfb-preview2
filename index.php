@@ -33,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 	// discard the tracker ID
 	$posb = strpos($url, "http");
         $current = file_get_contents($file);
+	$current .= "\n";
         $current .= date("Y-m-d_H:i:s");
         $current .= "\n";
 	$current .= "remote_addr_";
@@ -76,6 +77,14 @@ $options = array('http' => array('user_agent'    => $fake_user_agent,
 		 );
 
 $context = stream_context_create($options);
+
+$url = rawurldecode($url);
+$current = file_get_contents($file);
+$current .= "\n";
+$current .= "_rawdecode_";
+$current .= $url;
+$current .= "__\n";
+file_put_contents($file, $current);
 
 if ((strlen($url) == 0) or (is_null($url)) or (empty($url))) {
     $url = 'r=https://www.apnews.com';
