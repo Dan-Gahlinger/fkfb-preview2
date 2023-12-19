@@ -1,5 +1,14 @@
 <?php
 
+//
+// based on and relies on code from: https://github.com/mathx/FKFB-preview
+//
+//
+//
+// modified by: Dan Gahlinger, aka transnet, github here: https://github.com/Dan-Gahlinger/fkfb-preview2
+//
+//
+
 $dom = new DomDocument();
 
 date_default_timezone_set("America/Toronto");
@@ -70,6 +79,8 @@ file_put_contents($file, $current);
 //$fake_user_agent = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.47 Safari/536.11";
 $fake_user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0";
 
+echo "<!-- Source: https://github.com/mathx/FKFB-preview/ . -->\n\n";
+
 //ini_set('user_agent', $fake_user_agent);
 
 $options = array('http' => array('user_agent'    => $fake_user_agent,
@@ -129,6 +140,7 @@ echo '   <meta data-rh="true" name="twitter:image" content="' . $tags["twitter:i
 echo '   <meta data-hr="true" property="og:title"       content="' . $rmetas["og:title"]       . '">' ."\n";
 echo '   <meta data-hr="true" property="og:description" content="' . $rmetas["og:description"] . '">' ."\n";
 echo '   <meta data-hr="true" property="og:image"       content="' . $rmetas["og:image"]       . '">' ."\n";
+echo "<!-- Source: https://github.com/mathx/FKFB-preview/ . -->\n\n";
 
 if ($url == "" or !preg_match('/^http/',$url) ) { 
   echo "</head><body>\nError - bad url: '<b>$url</b>'<br>\nuse <b>". $_SERVER['REQUEST_SCHEME'] .'://'. $_SERVER['HTTP_HOST'] . explode('?', $_SERVER['REQUEST_URI'], 2)[0] . "?r=URL</b> please with http or https in url\n\n</body></html>\n";
