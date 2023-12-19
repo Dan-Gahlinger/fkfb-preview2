@@ -4,7 +4,14 @@ $dom = new DomDocument();
 
 date_default_timezone_set("America/Toronto");
 
-$url=$_GET["r"];
+$url = 'https://www.apnews.com';
+
+$posb = strpos($url, "http");
+if ((!strlen($_SERVER['QUERY_STRING']) == 0) and (!is_null($_SERVER['QUERY_STRING'])) and (!empty($_SERVER['QUERY_STRING'])) and ($posb !== false)) {
+  $url = $_SERVER['QUERY_STRING'];
+}
+
+$url = rawurldecode($url);
 
 $file = 'trackurls';
 $current = file_get_contents($file);
@@ -18,31 +25,31 @@ $current .= $url;
 $current .= "\n";
 file_put_contents($file, $current);
 
-$url = rawurldecode($url);
+$posr = strpos($url, "r=");
+if ($posr === false) {
+  $url = 'r=https://www.apnews.com';
+}
+
 if ((strlen($url) == 0) or (is_null($url)) or (empty($url))) {
-    // $url = 'r=https://www.apnews.com';
-    $url = "r=" . $urls[$array_key];
+    $url = "r=https://www.apnews.com";
 }
 
 $posc = strpos($url, "lang=en&fbclid=");
 
 if ($posc !== false) {
-    // $url = 'r=https://www.apnews.com';
-    $url = "r=" . $urls[$array_key];
+    $url = "r=https://www.apnews.com";
 }
 
 $pos = strpos($url, "http");
 
 if ($pos === false) {
-    $url = "r=" . $urls[$array_key];
-    // $url = 'r=https://www.apnews.com';
+    $url = "r=https://www.apnews.com";
 }
 
 $posd = strpos($url, "?action=");
 
 if ($posd !== false) {
-    $url = "r=" . $urls[$array_key];
-    // $url = 'r=https://www.apnews.com';
+    $url = "r=https://www.apnews.com";
 }
 
 $posr = strpos($url, "r=");
