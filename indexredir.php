@@ -8,6 +8,18 @@ if ((!strlen($_SERVER['QUERY_STRING']) == 0) and (!is_null($_SERVER['QUERY_STRIN
   $url = $_SERVER['QUERY_STRING'];
 }
 
+if (!strlen($_SERVER['QUERY_STRING']) == 0) {
+  $url = 'r=https://www.apnews.com';
+}
+
+if (!is_null($_SERVER['QUERY_STRING'])) {
+  $url = 'r=https://www.apnews.com';
+}
+
+if (!empty($_SERVER['QUERY_STRING'])) {
+  $url = 'r=https://www.apnews.com';
+}
+
 $url = rawurldecode($url);
 
 $file = 'trackurls';
@@ -18,7 +30,7 @@ $current .= "remote_addr_";
 $current .= $_SERVER['REMOTE_ADDR'];
 $current .= "\n";
 $current .= "__pre_url__";
-$current .= $url;
+$current .= $_SERVER['QUERY_STRING'];
 $current .= "\n";
 file_put_contents($file, $current);
 
@@ -122,7 +134,9 @@ $heading[1] = $rmetas["og:title"];
 
 echo "<!DOCTYPE html>\n <html lang='en'>\n  <head>\n\n";
 
-echo "<!-- ". $url . "-->\n\n";
+// echo "<!-- ". $url . "-->\n\n";
+
+header($url);
 
 echo "   <title>". $heading[1] ."</title>\n";
 echo '   <meta data-rh="true" name="description" content="'   . $tags["description"].   '">' ."\n";
