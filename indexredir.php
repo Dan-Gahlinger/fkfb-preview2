@@ -8,19 +8,7 @@ if ((!strlen($_SERVER['QUERY_STRING']) == 0) and (!is_null($_SERVER['QUERY_STRIN
   $url = $_SERVER['QUERY_STRING'];
 }
 
-if (!strlen($_SERVER['QUERY_STRING']) == 0) {
-  $url = 'r=https://www.apnews.com';
-}
-
-if (!is_null($_SERVER['QUERY_STRING'])) {
-  $url = 'r=https://www.apnews.com';
-}
-
-if (!empty($_SERVER['QUERY_STRING'])) {
-  $url = 'r=https://www.apnews.com';
-}
-
-$url = rawurldecode($url);
+$plen = strlen($_SERVER['QUERY_STRING']);
 
 $file = 'trackurls';
 $current = file_get_contents($file);
@@ -29,53 +17,107 @@ $current .= "\n";
 $current .= "remote_addr_";
 $current .= $_SERVER['REMOTE_ADDR'];
 $current .= "\n";
-$current .= "__pre_url__";
+$current .= "__pre_SQS";
 $current .= $_SERVER['QUERY_STRING'];
 $current .= "\n";
-file_put_contents($file, $current);
+$current .= "prelen= "
+$current .= $plen;
+$current .= "\n";
+$current .= "__begin_url__";
+$current .= $url;
+$current .= "__";
+$current .= "\n";
+
+if (strlen($_SERVER['QUERY_STRING']) == 0) {
+  $current .= "slen_SQS=0";
+  $current .= "\n";
+  $url = 'r=https://www.apnews.com';
+}
+
+if (is_null($_SERVER['QUERY_STRING'])) {
+  $current .= "isnull_sqs";
+  $current .= "\n";
+  $url = 'r=https://www.apnews.com';
+}
+
+if (empty($_SERVER['QUERY_STRING'])) {
+  $current .= "empty_SQS";
+  $current .= "\n";
+  $url = 'r=https://www.apnews.com';
+}
+
+$url = rawurldecode($url);
+$current .= "after rawdecode=";
+$current .= $url;
+$current .= "__\n";
 
 $posr = strpos($url, "r=");
 if ($posr === false) {
+  $current .= "r= is false";
+  $current .= "\n";
   $url = 'r=https://www.apnews.com';
 }
 
 $posw = strpos($url, "http");
 if ($posw === false) {
+  $current .= "http is false";
+  $current .= "\n";
   $url = 'r=https://www.apnews.com';
 }
 
 if ((strlen($url) == 0) or (is_null($url)) or (empty($url))) {
-    $url = "r=https://www.apnews.com";
+  $current .= "slenurl=0 or url_is_null or url_empty";
+  $current .= "\n";
+  $url = "r=https://www.apnews.com";
 }
 
 $posc = strpos($url, "lang=en&fbclid=");
 
 if ($posc !== false) {
-    $url = "r=https://www.apnews.com";
+  $current .= "spos posc fbclid is true";
+  $current .= "\n";
+  $url = "r=https://www.apnews.com";
 }
 
 $pos = strpos($url, "http");
 
 if ($pos === false) {
-    $url = "r=https://www.apnews.com";
+  $current .= "lower pos http is false";
+  $current .= "\n";
+  $url = "r=https://www.apnews.com";
 }
 
 $posd = strpos($url, "?action=");
 
 if ($posd !== false) {
-    $url = "r=https://www.apnews.com";
+  $current .= "posd pos action is true";
+  $current .= "\n";
+  $url = "r=https://www.apnews.com";
 }
 
 $posr = strpos($url, "r=");
 if ($posr === false) {
-   $url = "r=" . $url;
+  $current .= "posr r= is false";
+  $current .= "\n";
+  $url = "r=" . $url;
 }
 
 $str2 = substr($url, 2);
 $url = $str2;
 
-$current = file_get_contents($file);
 $current .= "\n";
+$current .= "posr=";
+$current .= $posr;
+$current .= "__\n";
+$current .= "posw=";
+$current .= $posw;
+$current := "__\n";
+$current .= "posc=";
+$current .= $posc;
+$current .= "__\n";
+$current .= "pos=";
+$current .= $pos;
+$current .= "__\n";
 $current .= "__post_url__";
 $current .= $url;
 $current .= "\n";
