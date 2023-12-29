@@ -8,6 +8,22 @@ if ((!strlen($_SERVER['QUERY_STRING']) == 0) and (!is_null($_SERVER['QUERY_STRIN
   $url = $_SERVER['QUERY_STRING'];
 }
 
+if (!isset($url)) {
+  $url = 'r=https://www.apnews.com';
+}
+
+if (strlen($_SERVER['QUERY_STRING']) == 0) {
+  $url = 'r=https://www.apnews.com';
+}
+
+if (is_null($_SERVER['QUERY_STRING'])) {
+  $url = 'r=https://www.apnews.com';
+}
+
+if (empty($_SERVER['QUERY_STRING'])) {
+  $url = 'r=https://www.apnews.com';
+}
+
 $plen = strlen($_SERVER['QUERY_STRING']);
 
 $file = 'trackurls';
@@ -20,7 +36,7 @@ $current .= "\n";
 $current .= "__pre_SQS";
 $current .= $_SERVER['QUERY_STRING'];
 $current .= "\n";
-$current .= "prelen= "
+$current .= "prelen= ";
 $current .= $plen;
 $current .= "\n";
 $current .= "__begin_url__";
@@ -111,7 +127,7 @@ $current .= $posr;
 $current .= "__\n";
 $current .= "posw=";
 $current .= $posw;
-$current := "__\n";
+$current .= "__\n";
 $current .= "posc=";
 $current .= $posc;
 $current .= "__\n";
@@ -142,7 +158,7 @@ $page    = file_get_contents($url, false, $context);
 
 libxml_use_internal_errors(true);
 
-if (! $dom->loadHTML($page) )  { echo "failed to load page $page\n"; }; 
+//if (! $dom->loadHTML($page) )  { echo "failed to load page $page\n"; }; 
 
 libxml_use_internal_errors(false);
 
@@ -160,19 +176,24 @@ foreach ($metas as $meta) {
     $content = $meta->getAttribute('content');
     $rmetas[$property] = $content;
 }
+
+$current = file_get_contents($file);
+$current .= "_just before redirect_";
+$current .= $url;
+$current .= "__\n";
+file_put_contents($file, $current);
+
 //var_dump($rmetas);
 
-$domain    = explode("/", $url,4);
-//echo "::: domain: ". $domain[2] . "\n";
-
-$domain[2] = strtoupper(preg_replace("/^www\./","", $domain[2]));
-
-//echo "::: domain: ". $domain[2] . "\n";
-//echo "\n\n";
-
-$rmetas["og:title"] = $domain[2] ." // ". $rmetas["og:title"];
-
-$heading[1] = $rmetas["og:title"];
+if ($url != "https://www.apnews.com") {
+  $domain    = explode("/", $url,4);
+  //echo "::: domain: ". $domain[2] . "\n";
+  $domain[2] = strtoupper(preg_replace("/^www\./","", $domain[2]));
+  //echo "::: domain: ". $domain[2] . "\n";
+  //echo "\n\n";
+  $rmetas["og:title"] = $domain[2] ." // ". $rmetas["og:title"];
+  $heading[1] = $rmetas["og:title"];
+}
 
 echo "<!DOCTYPE html>\n <html lang='en'>\n  <head>\n\n";
 
@@ -180,13 +201,14 @@ echo "<!DOCTYPE html>\n <html lang='en'>\n  <head>\n\n";
 
 header($url);
 
-echo "   <title>". $heading[1] ."</title>\n";
-echo '   <meta data-rh="true" name="description" content="'   . $tags["description"].   '">' ."\n";
-echo '   <meta data-rh="true" name="twitter:image" content="' . $tags["twitter:image"]. '">' ."\n";
-
-echo '   <meta data-hr="true" property="og:title"       content="' . $rmetas["og:title"]       . '">' ."\n";
-echo '   <meta data-hr="true" property="og:description" content="' . $rmetas["og:description"] . '">' ."\n";
-echo '   <meta data-hr="true" property="og:image"       content="' . $rmetas["og:image"]       . '">' ."\n";
+if ($url != "https://www.apnews.com") {
+  echo "   <title>". $heading[1] ."</title>\n";
+  echo '   <meta data-rh="true" name="description" content="'   . $tags["description"].   '">' ."\n";
+  // echo '   <meta data-rh="true" name="twitter:image" content="' . $tags["twitter:image"]. '">' ."\n";
+  echo '   <meta data-hr="true" property="og:title"       content="' . $rmetas["og:title"]       . '">' ."\n";
+  echo '   <meta data-hr="true" property="og:description" content="' . $rmetas["og:description"] . '">' ."\n";
+  echo '   <meta data-hr="true" property="og:image"       content="' . $rmetas["og:image"]       . '">' ."\n";
+}
 
 if ($url == "" or !preg_match('/^http/',$url) ) { 
   echo "</head><body>\nError - bad url: '<b>$url</b>'<br>\nuse <b>". $_SERVER['REQUEST_SCHEME'] .'://'. $_SERVER['HTTP_HOST'] . explode('?', $_SERVER['REQUEST_URI'], 2)[0] . "?r=URL</b> please with http or https in url\n\n</body></html>\n";
